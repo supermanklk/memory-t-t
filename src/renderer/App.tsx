@@ -5,6 +5,7 @@ import settingGray from '../asset/images/icon/setting-gray.png';
 import settingActive from '../asset/images/icon/setting-active.png';
 import personalCenterActive from '../asset/images/icon/personal-center-active.png';
 import personalCenterGray from '../asset/images/icon/personal-center-gray.png';
+import { ipcRenderer } from 'electron';
 
 import './App.css';
 
@@ -52,6 +53,13 @@ const Hello = () => {
   useEffect(() => {
     createTime(ref.current, getTime(knowledgePointArr[ref.current].length));
   }, []);
+
+  const learnMore = () => {
+    ipcRenderer.send('message', 111);
+    ipcRenderer.on('replay', (event, arg) => {
+      console.log('收到主线程返回的信息22', arg);
+    });
+  };
 
   function createTime(current, time) {
     timerRef.current = setTimeout(() => {
@@ -145,7 +153,14 @@ const Hello = () => {
         {/*<img width="200px" alt="icon" src={icon} />*/}
         {knowledgePointArr[index]}
       </div>
-      <Button className="learn-more">Learn More</Button>
+      <Button
+        onClick={() => {
+          learnMore();
+        }}
+        className="learn-more"
+      >
+        Learn More
+      </Button>
     </div>
   );
 };

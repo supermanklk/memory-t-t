@@ -31,6 +31,11 @@ ipcMain.on('ipc-example', async (event, arg) => {
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
+ipcMain.on('message', (event, arg) => {
+  console.log('主线程收到页面点击了Learn More-111');
+  event.sender.send('replay', '收到你点击了 Learn More');
+});
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
