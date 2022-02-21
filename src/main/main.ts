@@ -80,8 +80,8 @@ const createWindow = async () => {
     skipTaskbar: true, // 是否在任务栏中显示窗口。 默认值为 false。
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 
