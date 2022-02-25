@@ -14,6 +14,8 @@ body {
   overflow-y: hidden;
   display: flex;
   background: #2c303a;
+  /* electron关于无边框窗口无法拖拽移动以及点击事件失效的问题 https://blog.51cto.com/u_14524868/3172506 */
+  -webkit-app-region: drag;
 }
 
 button {

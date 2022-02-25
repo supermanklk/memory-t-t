@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import notifier from 'node-notifier';
 
 export default class AppUpdater {
   constructor() {
@@ -31,9 +32,29 @@ ipcMain.on('ipc-example', async (event, arg) => {
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
-ipcMain.on('message', (event, arg) => {
-  console.log('主线程收到页面点击了Learn More-111');
+ipcMain.on('openUrl', (event, arg) => {
+  console.log('主线程收到页面点击了Learn More', arg);
+  shell.openExternal(arg);
+  notifier.notify(
+    {
+      title: 111,
+      message: 222,
+    },
+    (err, res) => {
+      if (err) {
+        console.log('error:', err);
+      }
+    }
+  );
   event.sender.send('replay', '收到你点击了 Learn More');
+});
+
+ipcMain.on('value-to-max', (event, arg) => {
+  notifier.notify({
+    title: '提示',
+    message: arg,
+    icon: '../../assets/icon.svg',
+  });
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -77,9 +98,10 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 824,
-    height: 228,
+    height: 340,
+    titleBarStyle: 'hidden',
     // maxWidth: 900,
-    // maxHeight: 300,
+    maxHeight: 340,
     maximizable: false, // 窗口是否可最大化。
     alwaysOnTop: true, // 窗口是否永远在别的窗口的上面。
     skipTaskbar: true, // 是否在任务栏中显示窗口。 默认值为 false。
