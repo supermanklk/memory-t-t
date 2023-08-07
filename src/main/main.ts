@@ -12,9 +12,9 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import notifier from 'node-notifier';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import notifier from 'node-notifier';
 
 export default class AppUpdater {
   constructor() {
@@ -98,10 +98,14 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 824,
-    height: 340,
+    height: 300,
     titleBarStyle: 'hidden',
     // maxWidth: 900,
+    maxWidth: 1900,
     maxHeight: 340,
+    // maxHeight: 840,
+    minHeight: 300,
+    minWidth: 500,
     maximizable: false, // 窗口是否可最大化。
     alwaysOnTop: true, // 窗口是否永远在别的窗口的上面。
     skipTaskbar: true, // 是否在任务栏中显示窗口。 默认值为 false。
@@ -111,6 +115,11 @@ const createWindow = async () => {
       contextIsolation: false,
     },
   });
+
+  console.log(
+    'faith=============resolveHtmlPath',
+    resolveHtmlPath('index.html')
+  );
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -124,6 +133,17 @@ const createWindow = async () => {
       mainWindow.show();
     }
   });
+
+  // 登录弹窗
+  // const loginChild = new BrowserWindow({
+  //   width: 400,
+  //   height: 100,
+  //   alwaysOnTop: true,
+  //   title: '登录',
+  //   parent: mainWindow,
+  // });
+  // loginChild.loadURL(resolveHtmlPath('components/Login/index'));
+  // loginChild.show();
 
   mainWindow.on('closed', () => {
     mainWindow = null;

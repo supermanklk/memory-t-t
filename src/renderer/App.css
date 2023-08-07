@@ -6,6 +6,25 @@
 #root {
   width: 100%;
 }
+
+:root {
+  --main-font-gray-color: #9b9dad;
+  --active-button-color: #2c303a;
+  --active-button-color-blue: #1da1f2;
+}
+
+.have-login {
+  width: 24px;
+  height: 24px;
+  background: #1da1f2;
+  border-radius: 50%;
+  overflow: hidden;
+  text-align: center;
+  line-height: 24px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
 body {
   position: relative;
   color: white;
@@ -14,6 +33,8 @@ body {
   overflow-y: hidden;
   display: flex;
   background: #2c303a;
+
+  /* background: rgba(0, 0, 0, 0.1); */
   /* electron关于无边框窗口无法拖拽移动以及点击事件失效的问题 https://blog.51cto.com/u_14524868/3172506 */
   -webkit-app-region: drag;
 }
@@ -44,7 +65,6 @@ a {
   text-decoration: none;
   height: fit-content;
   width: fit-content;
-  margin: 10px;
 }
 
 a:hover {
@@ -61,15 +81,14 @@ a:hover {
   line-height: 1.5;
   font-size: 15px;
   font-weight: 400;
-  font-family:  Sans-Serif;
+  font-family: Sans-Serif;
 }
 
 .shakeX {
-  animation:bounceIn;
+  animation: bounceIn;
   animation-duration: 1s;
 }
 .learn-more {
-
   --cp-sidebar-width: 188px;
   --cp-sidebar-fixed-height: 700px;
   --cp-header-height: 65px;
@@ -77,11 +96,11 @@ a:hover {
   --cp-control-bar-height: 29px;
   --cp-control-space-between: 1.5rem;
   --cp-font-family: 'Lato', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma,
-  Sans-Serif;
+    Sans-Serif;
   --cp-font-family-header: 'Telefon Black', Sans-Serif;
   --cp-font-family-header-alt: 'Telefon', Sans-Serif;
   --cp-font-family-monospace: SFMono-Regular, Consolas, 'Liberation Mono', Menlo,
-  monospace;
+    monospace;
   --cp-button-bg: var(--cp-color-13);
   --cp-button-color: white;
   --cp-button-icon: currentColor;
@@ -195,8 +214,8 @@ a:hover {
   line-height: 1.2;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-decoration: none!important;
-  font-weight: 400!important;
+  text-decoration: none !important;
+  font-weight: 400 !important;
   cursor: pointer;
   background: var(--cp-button-bg);
   color: var(--cp-button-color);
@@ -205,9 +224,9 @@ a:hover {
   border-radius: var(--cp-button-border-radius);
   border: var(--cp-button-border-width) solid transparent;
   --cp-button-padding: var(--cp-button-padding-block)
-  var(--cp-button-padding-inline);
+    var(--cp-button-padding-inline);
   --cp-button-margin: var(--cp-button-margin-block)
-  var(--cp-button-margin-inline) var(--cp-button-margin-block) 0;
+    var(--cp-button-margin-inline) var(--cp-button-margin-block) 0;
 }
 
 .addSty {
@@ -218,11 +237,11 @@ a:hover {
   --cp-control-bar-height: 29px;
   --cp-control-space-between: 1.5rem;
   --cp-font-family: 'Lato', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma,
-  Sans-Serif;
+    Sans-Serif;
   --cp-font-family-header: 'Telefon Black', Sans-Serif;
   --cp-font-family-header-alt: 'Telefon', Sans-Serif;
   --cp-font-family-monospace: SFMono-Regular, Consolas, 'Liberation Mono', Menlo,
-  monospace;
+    monospace;
   --cp-button-bg: var(--cp-color-13);
   --cp-button-color: white;
   --cp-button-icon: currentColor;
@@ -340,7 +359,6 @@ a:hover {
 .addInputStyOuter {
   display: flex;
   align-items: center;
-
 }
 
 .mainOuterHeader {
@@ -349,7 +367,6 @@ a:hover {
   justify-content: flex-end;
   margin-bottom: 20px;
   align-items: center;
-
 }
 
 .animate {
@@ -357,7 +374,8 @@ a:hover {
   animation-duration: 2s;
 }
 
-.mainOuterHeaderImg {
+.mainOuterHeaderImg,
+.labelHeaderImg {
   width: 24px;
   height: 24px;
   margin-left: 10px;
@@ -370,6 +388,13 @@ a:hover {
   height: 24px;
 }
 
+.labelHeaderImg:hover {
+  cursor: pointer;
+  content: url('../asset//images/icon/label-active.svg');
+  width: 24px;
+  height: 24px;
+}
+
 .mainOuterHeaderActorImg {
   width: 24px;
   height: 24px;
@@ -378,12 +403,8 @@ a:hover {
 
 .mainOuterHeaderActorImg:hover {
   cursor: pointer;
-  content: url("../asset/images/icon/personal-center-active.png")
+  content: url('../asset/images/icon/personal-center-active.png');
 }
-
-
-
-
 
 .mainOuter {
   width: 100%;
@@ -394,4 +415,3 @@ a:hover {
 .none {
   display: none;
 }
-

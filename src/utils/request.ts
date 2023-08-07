@@ -1,4 +1,9 @@
 import qs from 'qs';
+
+export function getPreHost() {
+  return 'https://kj.supermanklk.cn';
+}
+
 export function getQueryPath(path = '', query = {}) {
   const search = qs.stringify(query);
   if (search.length) {
