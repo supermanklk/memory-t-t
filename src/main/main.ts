@@ -112,22 +112,6 @@ const createWindow = async () => {
     },
   });
 
-  const view = new BrowserView({
-    webPreferences: {
-      nodeIntegration: false, // 禁止网页中的 Node.js 访问
-      contextIsolation: true, // 禁止网页中的 Electron API 访问
-    },
-  }); //创建子窗口
-  mainWindow.setBrowserView(view); //自窗口设置嵌入式子窗口
-  view.setAutoResize({
-    width: true,
-    height: true,
-    // horizontal: true,
-    // vertical: true,
-  });
-  view.setBounds({ x: 400, y: 400, width: 300, height: 300 }); //设置x，y坐标，窗口宽度和高度
-  view.webContents.loadURL('https://www.electronjs.org'); //加载页面
-
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
