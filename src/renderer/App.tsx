@@ -8,6 +8,8 @@ import personalCenterGray from '../asset/images/icon/personal-center-gray.png';
 import { ipcRenderer } from 'electron';
 import { request } from '../utils/request';
 
+import SettingsPage from '../SettingsPage'; // 设置页面组件
+
 import './App.css';
 
 const data = [
@@ -51,92 +53,112 @@ const Hello = () => {
     return (60 * 1000 * parseInt(size)) / 250;
   };
 
-  useEffect(() => {
-    fetch('https://kj.supermanklk.cn/memory/getKnowledeg')
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (res) {
-        if (res.errcode == 0) {
-          let reverseArr = res.results.reverse();
-          setKnowledgePointArr(reverseArr);
-        }
-      });
-  }, []);
+  const [width, setWidth] = useState<string>('');
+  const [height, setHeight] = useState<string>('');
 
-  const learnMore = () => {
-    let { knowledge_url } = knowledgePointArr[index];
-    ipcRenderer.send(
-      'openUrl',
-      'https://blog.csdn.net/cuishizun/article/details/82500335'
-    );
-    ipcRenderer.on('replay', (event, arg) => {
-      console.log('收到主线程返回的信息22', arg);
-    });
-  };
+  // useEffect(() => {
+  //   fetch('https://kj.supermanklk.cn/memory/getKnowledeg')
+  //     .then(function (response) {
+  //       return response.json();
+  //     })
+  //     .then(function (res) {
+  //       if (res.errcode == 0) {
+  //         let reverseArr = res.results.reverse();
+  //         setKnowledgePointArr(reverseArr);
+  //       }
+  //     });
+  // }, []);
 
-  function createTime(current, time) {
-    timerRef.current = setTimeout(() => {
-      clearTimeout(timerRef.current);
-      let nextCurrent = ref.current + 1;
-      if (nextCurrent === knowledgePointArr.length) {
-        nextCurrent = 0;
-      }
+  // const learnMore = () => {
+  //   let { knowledge_url } = knowledgePointArr[index];
+  //   ipcRenderer.send(
+  //     'openUrl',
+  //     'https://blog.csdn.net/cuishizun/article/details/82500335'
+  //   );
+  //   ipcRenderer.on('replay', (event, arg) => {
+  //     console.log('收到主线程返回的信息22', arg);
+  //   });
+  // };
 
-      setIndex(nextCurrent);
-      createTime(
-        nextCurrent,
-        getTime(knowledgePointArr[nextCurrent].knowledge_point.length)
-      );
-      ref.current = nextCurrent;
-    }, time);
-  }
+  // function createTime(current, time) {
+  //   timerRef.current = setTimeout(() => {
+  //     clearTimeout(timerRef.current);
+  //     let nextCurrent = ref.current + 1;
+  //     if (nextCurrent === knowledgePointArr.length) {
+  //       nextCurrent = 0;
+  //     }
 
-  useEffect(() => {
-    if (knowledgePointArr.length > 0) {
-      setIndex(0);
-      ref.current = 0;
-      clearTimeout(timerRef.current);
-      createTime(0, getTime(knowledgePointArr[0].knowledge_point.length));
-    }
-  }, [knowledgePointArr.length]);
+  //     setIndex(nextCurrent);
+  //     createTime(
+  //       nextCurrent,
+  //       getTime(knowledgePointArr[nextCurrent].knowledge_point.length)
+  //     );
+  //     ref.current = nextCurrent;
+  //   }, time);
+  // }
 
-  const addValue = () => {
-    if (!value) return;
-    if (value.length >= 425) {
-      ipcRenderer.send('value-to-max', '知识点长度不能超过425个字符');
-      return;
-    }
+  // useEffect(() => {
+  //   if (knowledgePointArr.length > 0) {
+  //     setIndex(0);
+  //     ref.current = 0;
+  //     clearTimeout(timerRef.current);
+  //     createTime(0, getTime(knowledgePointArr[0].knowledge_point.length));
+  //   }
+  // }, [knowledgePointArr.length]);
 
-    // 添加数据到数据库
-    request('https://kj.supermanklk.cn/memory/setKnowledge', 'POST', {
-      tel: 17637794541,
-      knowledge: value,
-    }).then((res) => {
-      if (res.errCode === 200) {
-        setKnowledgePointArr([
-          {
-            knowledge_point: value,
-            knowledge_url: null,
-            create_time: '2022-02-22T02:21:59.000Z',
-            pid_tel: '17637794541',
-          },
-          ...knowledgePointArr,
-        ]);
-        setValue('');
-      } else {
-        // message.warning(res.errMsg);
-      }
-    });
-  };
+  // const addValue = () => {
+  //   if (!value) return;
+  //   if (value.length >= 425) {
+  //     ipcRenderer.send('value-to-max', '知识点长度不能超过425个字符');
+  //     return;
+  //   }
 
-  const valueChange = (e) => {
-    setValue(e.target.value);
-  };
+  //   // 添加数据到数据库
+  //   request('https://kj.supermanklk.cn/memory/setKnowledge', 'POST', {
+  //     tel: 17637794541,
+  //     knowledge: value,
+  //   }).then((res) => {
+  //     if (res.errCode === 200) {
+  //       setKnowledgePointArr([
+  //         {
+  //           knowledge_point: value,
+  //           knowledge_url: null,
+  //           create_time: '2022-02-22T02:21:59.000Z',
+  //           pid_tel: '17637794541',
+  //         },
+  //         ...knowledgePointArr,
+  //       ]);
+  //       setValue('');
+  //     } else {
+  //       // message.warning(res.errMsg);
+  //     }
+  //   });
+  // };
 
-  const clickSet = () => {
-    setIsShowSet(!isShowSet);
-  };
+  // const valueChange = (e) => {
+  //   setValue(e.target.value);
+  // };
+
+  // const clickSet = () => {
+  //   setIsShowSet(!isShowSet);
+  // };
+
+  return (
+    <div>
+      <SettingsPage
+        onSave={(size) => {
+          ipcRenderer.send('window-size-change', size);
+        }}
+        // onSave=(size) => {
+        //   console.log('faith=============size', size);
+        //   // const size = { width: 100, height: 200 };
+        //   // console.log('faith=============6', width, height);
+        //   // ipcRenderer.send('window-size-change', size);
+        //   // console.log('faith=============save1');
+        // }}
+      />
+    </div>
+  );
 
   return (
     <div className="mainOuter">

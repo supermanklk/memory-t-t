@@ -10,6 +10,25 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <div id="webviewContainer"></div>
+
+    <div id="browserViewContainer">
+      <!-- 这里是 BrowserView -->
+    </div>
+
+    <div
+      id="overlay"
+      style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+      "
+    ></div>
   </body>
   <script>
     window.electron.ipcRenderer.once('ipc-example', (arg) => {

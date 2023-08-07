@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, BrowserView } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -99,10 +99,10 @@ const createWindow = async () => {
     show: false,
     width: 824,
     height: 340,
-    titleBarStyle: 'hidden',
+    // titleBarStyle: 'hidden',
     // maxWidth: 900,
-    maxHeight: 340,
-    maximizable: false, // 窗口是否可最大化。
+    // maxHeight: 340,
+    maximizable: true, // 窗口是否可最大化。
     alwaysOnTop: true, // 窗口是否永远在别的窗口的上面。
     skipTaskbar: true, // 是否在任务栏中显示窗口。 默认值为 false。
     icon: getAssetPath('icon.png'),
@@ -111,6 +111,22 @@ const createWindow = async () => {
       contextIsolation: false,
     },
   });
+
+  const view = new BrowserView({
+    webPreferences: {
+      nodeIntegration: false, // 禁止网页中的 Node.js 访问
+      contextIsolation: true, // 禁止网页中的 Electron API 访问
+    },
+  }); //创建子窗口
+  mainWindow.setBrowserView(view); //自窗口设置嵌入式子窗口
+  view.setAutoResize({
+    width: true,
+    height: true,
+    // horizontal: true,
+    // vertical: true,
+  });
+  view.setBounds({ x: 400, y: 400, width: 300, height: 300 }); //设置x，y坐标，窗口宽度和高度
+  view.webContents.loadURL('https://www.electronjs.org'); //加载页面
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -152,6 +168,22 @@ app.on('window-all-closed', () => {
   // after all windows have been closed
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+// 监听来自渲染进程（设置页面）的IPC消息
+ipcMain.on('window-size-change', (event, size) => {
+  console.log('faith=============?');
+  if (mainWindow) {
+    console.log('faith=============size', size);
+    mainWindow.setSize(size.width, size.height);
+  }
+});
+
+// Listen for the 'toggle-fullscreen' event from the renderer process
+ipcMain.on('toggle-fullscreen', () => {
+  if (mainWindow) {
+    mainWindow.setFullScreen(!mainWindow.isFullScreen());
   }
 });
 

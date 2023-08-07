@@ -61,15 +61,14 @@ a:hover {
   line-height: 1.5;
   font-size: 15px;
   font-weight: 400;
-  font-family:  Sans-Serif;
+  font-family: Sans-Serif;
 }
 
 .shakeX {
-  animation:bounceIn;
+  animation: bounceIn;
   animation-duration: 1s;
 }
 .learn-more {
-
   --cp-sidebar-width: 188px;
   --cp-sidebar-fixed-height: 700px;
   --cp-header-height: 65px;
@@ -77,11 +76,11 @@ a:hover {
   --cp-control-bar-height: 29px;
   --cp-control-space-between: 1.5rem;
   --cp-font-family: 'Lato', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma,
-  Sans-Serif;
+    Sans-Serif;
   --cp-font-family-header: 'Telefon Black', Sans-Serif;
   --cp-font-family-header-alt: 'Telefon', Sans-Serif;
   --cp-font-family-monospace: SFMono-Regular, Consolas, 'Liberation Mono', Menlo,
-  monospace;
+    monospace;
   --cp-button-bg: var(--cp-color-13);
   --cp-button-color: white;
   --cp-button-icon: currentColor;
@@ -195,8 +194,8 @@ a:hover {
   line-height: 1.2;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-decoration: none!important;
-  font-weight: 400!important;
+  text-decoration: none !important;
+  font-weight: 400 !important;
   cursor: pointer;
   background: var(--cp-button-bg);
   color: var(--cp-button-color);
@@ -205,9 +204,9 @@ a:hover {
   border-radius: var(--cp-button-border-radius);
   border: var(--cp-button-border-width) solid transparent;
   --cp-button-padding: var(--cp-button-padding-block)
-  var(--cp-button-padding-inline);
+    var(--cp-button-padding-inline);
   --cp-button-margin: var(--cp-button-margin-block)
-  var(--cp-button-margin-inline) var(--cp-button-margin-block) 0;
+    var(--cp-button-margin-inline) var(--cp-button-margin-block) 0;
 }
 
 .addSty {
@@ -218,11 +217,11 @@ a:hover {
   --cp-control-bar-height: 29px;
   --cp-control-space-between: 1.5rem;
   --cp-font-family: 'Lato', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma,
-  Sans-Serif;
+    Sans-Serif;
   --cp-font-family-header: 'Telefon Black', Sans-Serif;
   --cp-font-family-header-alt: 'Telefon', Sans-Serif;
   --cp-font-family-monospace: SFMono-Regular, Consolas, 'Liberation Mono', Menlo,
-  monospace;
+    monospace;
   --cp-button-bg: var(--cp-color-13);
   --cp-button-color: white;
   --cp-button-icon: currentColor;
@@ -340,7 +339,6 @@ a:hover {
 .addInputStyOuter {
   display: flex;
   align-items: center;
-
 }
 
 .mainOuterHeader {
@@ -349,7 +347,6 @@ a:hover {
   justify-content: flex-end;
   margin-bottom: 20px;
   align-items: center;
-
 }
 
 .animate {
@@ -378,12 +375,8 @@ a:hover {
 
 .mainOuterHeaderActorImg:hover {
   cursor: pointer;
-  content: url("../asset/images/icon/personal-center-active.png")
+  content: url('../asset/images/icon/personal-center-active.png');
 }
-
-
-
-
 
 .mainOuter {
   width: 100%;
@@ -394,4 +387,3 @@ a:hover {
 .none {
   display: none;
 }
-
