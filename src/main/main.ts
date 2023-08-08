@@ -159,9 +159,7 @@ app.on('window-all-closed', () => {
 
 // 监听来自渲染进程（设置页面）的IPC消息
 ipcMain.on('window-size-change', (event, size) => {
-  console.log('faith=============?');
   if (mainWindow) {
-    console.log('faith=============size', size);
     mainWindow.setSize(size.width, size.height);
   }
 });
@@ -170,6 +168,12 @@ ipcMain.on('window-size-change', (event, size) => {
 ipcMain.on('toggle-fullscreen', () => {
   if (mainWindow) {
     mainWindow.setFullScreen(!mainWindow.isFullScreen());
+  }
+});
+
+ipcMain.on('fullscreen', () => {
+  if (mainWindow) {
+    mainWindow.setFullScreen(true);
   }
 });
 

@@ -68,13 +68,101 @@
 
 .modalInput {
   height: 40px;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .globalCcnfig {
-  position: fixed;
-  z-index: 999;
-  width: 80px;
-  height: 80px;
-  background: red;
+  position: absolute;
+  z-index: 999999;
+  width: 40px;
+  height: 40px;
+  // background: red;
+  border-radius: 50%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  padding-top: 24px;
+  padding-right: 24px;
+  margin-bottom: 24px;
+  pointer-events: auto;
+}
+
+.settringImg {
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+}
+.menu {
+  pointer-events: auto;
+  width: 100%;
+  .menuItem {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    color: #919191;
+  }
+  .menuItem:hover {
+    color: #1785ff;
+  }
+}
+
+.logOffModal {
+  .warnningDesc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .logOffModalIcon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .footer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+.errorTip {
+  color: #ff220e;
+  font-size: 12px;
+  margin-left: 60px;
+  margin-top: 12px;
+}
+
+.logOffModalContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .title {
+    width: 70px;
+  }
+  margin-top: 12px;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+}
+
+.serviceConfigItem {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  label {
+    width: 110px;
+  }
+  display: flex;
+}
+
+.serviceConfigItemCus {
+  width: 55px;
+}
+
+.serviceConfigLock {
+  width: 100px;
+  pointer-events: auto;
 }
