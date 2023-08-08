@@ -82,10 +82,6 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-function resetLockTimer() {
-  console.log('ok');
-}
-
 const createWindow = async () => {
   if (isDevelopment) {
     await installExtensions();
@@ -118,14 +114,18 @@ const createWindow = async () => {
     },
   });
 
-  mainWindow.on('focus', resetLockTimer);
+  function resetLockTimer() {
+    mainWindow?.webContents.send('mouseScrolled');
+  }
 
+  mainWindow.on('focus', resetLockTimer);
   mainWindow.on('blur', resetLockTimer);
 
   // 监听鼠标事件改变 https://wizardforcel.gitbooks.io/electron-doc/content/api/web-contents.html
+  // ps: 鼠标事件的改变即可作为用户操作指标,事件改变即说明鼠标发生偏移,因为目标对象改变
   mainWindow.webContents.on('cursor-changed', (event) => {
     // 在这里处理鼠标滚动事件
-    console.log('Mouse scrolled:');
+    mainWindow?.webContents.send('mouseScrolled');
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));

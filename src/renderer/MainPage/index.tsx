@@ -148,6 +148,19 @@ const Index = (props) => {
   }, []);
 
   useEffect(() => {
+    const handleMouseMove = () => {
+      // 在这里执行鼠标移动事件的操作
+      console.log('Mouse moved:');
+    };
+
+    ipcRenderer.on('mouseScrolled', handleMouseMove);
+
+    return () => {
+      ipcRenderer.removeListener('mouseScrolled', handleMouseMove);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!logOffModal) {
       setlogOffPassErr('');
       setLogOffPass('');
