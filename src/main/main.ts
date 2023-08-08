@@ -82,6 +82,10 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+function resetLockTimer() {
+  console.log('ok');
+}
+
 const createWindow = async () => {
   if (isDevelopment) {
     await installExtensions();
@@ -112,6 +116,16 @@ const createWindow = async () => {
       nodeIntegration: true,
       contextIsolation: false,
     },
+  });
+
+  mainWindow.on('focus', resetLockTimer);
+
+  mainWindow.on('blur', resetLockTimer);
+
+  // 监听鼠标事件改变 https://wizardforcel.gitbooks.io/electron-doc/content/api/web-contents.html
+  mainWindow.webContents.on('cursor-changed', (event) => {
+    // 在这里处理鼠标滚动事件
+    console.log('Mouse scrolled:');
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
