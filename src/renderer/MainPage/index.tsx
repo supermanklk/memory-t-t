@@ -53,6 +53,9 @@ const Index = () => {
   const [logOffPass, setLogOffPass] = useState('');
   const [logOffPassErr, setlogOffPassErr] = useState('');
 
+  // 登录出错提示
+  const [loginErrorText, setLoginErrorText] = useState('');
+
   // 服务配置State
   const [screenSize, setScreenSize] = useState('fullscreen');
   const [customWidth, setCustomWidth] = useState('');
@@ -71,6 +74,12 @@ const Index = () => {
 
   // 处理登录按钮点击事件
   const handleLogin = () => {
+    //
+    if (verifyCode.length !== 4) {
+      setLoginErrorText('验证码错误');
+      return;
+    }
+
     // 调用登录接口，并带上验证码
     const hashedPass = MD5(password).toString();
     const apiUrl = `${HOST}/admin/login/doLogin?password=${hashedPass}&username=${username}&verifyCode=${verifyCode}`;
@@ -89,6 +98,7 @@ const Index = () => {
           success: true,
         };
         if (mockData?.success === true) {
+          setLoginErrorText('');
           setLocalPass(password);
           setClsid(mockData?.object?.clsid);
           let iframeUrl = `${serviceIp}${serviceAdd}`;
@@ -99,6 +109,8 @@ const Index = () => {
           }
           createIframe(iframeUrl);
           setIslogin(true);
+        } else {
+          setLoginErrorText(mockData?.msg);
         }
       })
       .catch((error) => {
@@ -377,6 +389,10 @@ const Index = () => {
                 // onClick={updateChaUrl}
               />
             </div>
+            {loginErrorText && (
+              <div className={styles.loginErrorText}>{loginErrorText}</div>
+            )}
+
             <Button
               disabled={username == '' || password === '' || verifyCode === ''}
               className={styles.loginBtn}
