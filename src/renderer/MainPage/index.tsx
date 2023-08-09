@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './index.module.scss';
 import { Input, Button, Modal, Popover, message, Radio, Select } from 'antd';
 import 'antd/dist/antd.css'; // 引入antd样式文件
@@ -49,6 +49,8 @@ const Index = (props) => {
 
   const [lockTime, setLockTime] = useState('0'); // 设置默认值为 '0'，即"永不"
   const [serviceModal, setServiceModal] = useState(false);
+  let countdownLockTimer: any = useRef(null);
+  const lockTimeRef: any = useRef('0');
 
   // 获取验证码图片的URL
   const getCaptchaUrl = () => {
@@ -75,10 +77,15 @@ const Index = (props) => {
           success: true,
         };
         if (mockData?.success === true) {
+          setLocalPass(password);
           setClsid(mockData?.object?.clsid);
-          createIframe(
-            `${serviceIp}${serviceAdd}?clsid=${mockData?.object?.clsid}#/login?redirect=/visualization`
-          );
+          let iframeUrl = `${serviceIp}${serviceAdd}`;
+          if (serviceAdd.includes(`?`)) {
+            iframeUrl += `&clsid=${mockData?.object?.clsid}`;
+          } else {
+            iframeUrl += `?clsid=${mockData?.object?.clsid}`;
+          }
+          createIframe(iframeUrl);
           setIslogin(true);
         }
       })
@@ -147,10 +154,20 @@ const Index = (props) => {
     setCaptchaUrl(url);
   }, []);
 
+  const reStartLockScreenCountDown = () => {
+    // 能够执行【重置锁屏倒计时】的条件
+    // 1、非永久 2、已经有倒计时锁屏 3、非锁屏状态
+    if (lockTimeRef.current != '0' && countdownLockTimer.current && !lock) {
+      // lockTime 锁屏lockTime分钟
+      lockScreenCountDown(parseInt(lockTimeRef.current) * 1000 * 60);
+    }
+  };
+
   useEffect(() => {
     const handleMouseMove = () => {
       // 在这里执行鼠标移动事件的操作
       console.log('Mouse moved:');
+      reStartLockScreenCountDown();
     };
 
     ipcRenderer.on('mouseScrolled', handleMouseMove);
@@ -191,6 +208,10 @@ const Index = (props) => {
     setLogOffModal(false);
   };
 
+  const setLocalPass = (value: string) => {
+    localStorage.setItem('desk-pass', value);
+  };
+
   const getLocalPass = () => {
     return localStorage.getItem('desk-pass');
   };
@@ -217,8 +238,8 @@ const Index = (props) => {
   };
 
   const handleLockTimeChange = (value) => {
-    console.log('faith=============', value);
     setLockTime(value);
+    lockTimeRef.current = value;
   };
 
   const unlockScreen = () => {
@@ -228,6 +249,7 @@ const Index = (props) => {
 
   const lockScreen = () => {
     setLock(true);
+    console.log('faith=============锁屏了');
     // 使用 JavaScript 获取 body 元素
     const bodyElement: any = document.querySelector('body');
     // 将 body 元素的 pointer-events 属性设置为 none
@@ -242,6 +264,19 @@ const Index = (props) => {
       );
     }, 300);
   };
+  const lockScreenCountDown = (timeInMillis: number) => {
+    // 先取消之前的计时器（如果有）
+    clearTimeout(countdownLockTimer.current);
+
+    // 设置新的计时器
+    countdownLockTimer.current = setTimeout(lockScreen, timeInMillis);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(countdownLockTimer.current);
+    };
+  }, []);
 
   const systemSettingConfirm = () => {
     // 窗口大小
@@ -257,7 +292,14 @@ const Index = (props) => {
       refreshIframe();
     }
 
-    lockScreen();
+    // 提交之前恢复之前的锁屏状态
+    unlockScreen();
+    clearTimeout(countdownLockTimer.current);
+    if (lockTimeRef.current != '0') {
+      // lockTime 锁屏lockTime分钟
+      lockScreenCountDown(parseInt(lockTimeRef.current) * 1000 * 60);
+    }
+
     setServiceModal(false);
   };
 
@@ -280,7 +322,7 @@ const Index = (props) => {
         {islogin && (
           <Popover
             placement="leftBottom"
-            title={`个人中心`}
+            title={`个人中心${lock ? '(锁屏中)' : ''}`}
             content={content}
             trigger="click"
           >
@@ -329,7 +371,10 @@ const Index = (props) => {
                 style={{ height: 40, width: 100 }}
                 src={captchaUrl}
                 alt="验证码"
-                onClick={updateChaUrl}
+                onClick={() => {
+                  setCaptchaUrl(getCaptchaUrl());
+                }}
+                // onClick={updateChaUrl}
               />
             </div>
             <Button
@@ -418,6 +463,7 @@ const Index = (props) => {
 
       {/* 服务配置的Modal */}
       <Modal
+        wrapClassName="serviceWrapConfig"
         title="服务配置"
         open={serviceModal}
         width={400}
@@ -445,22 +491,22 @@ const Index = (props) => {
           />
         </div>
         <div className={styles.serviceConfigItem}>
-          <label>屏幕尺寸</label>
+          <label style={{ width: 90 }}>屏幕尺寸</label>
           <Radio.Group onChange={handleScreenSizeChange} value={screenSize}>
             <Radio value="fullscreen">全屏</Radio>
             <Radio value="custom">自定义</Radio>
           </Radio.Group>
         </div>
         {screenSize === 'custom' && (
-          <div style={{ marginLeft: 110 }} className={styles.serviceConfigItem}>
-            <label style={{ width: 30 }}>W</label>
+          <div style={{ marginLeft: 90 }} className={styles.serviceConfigItem}>
+            <span style={{ marginRight: 10 }}>W</span>
             <Input
               className={styles.serviceConfigItemCus}
               placeholder="宽度"
               value={customWidth}
               onChange={(e) => setCustomWidth(e.target.value)}
             />
-            <label style={{ width: 30, marginLeft: 30 }}>H</label>
+            <span style={{ marginLeft: 10, marginRight: 10 }}>H</span>
             <Input
               className={styles.serviceConfigItemCus}
               placeholder="高度"
@@ -471,8 +517,9 @@ const Index = (props) => {
         )}
 
         <div className={styles.serviceConfigItem}>
-          <label>锁屏时间</label>
+          <label style={{ width: 90 }}>锁屏时间</label>
           <Select
+            popupClassName={styles.serviceConfigItemSelect}
             value={lockTime}
             className={styles.serviceConfigLock}
             onChange={handleLockTimeChange}

@@ -40,6 +40,13 @@ body {
 li {
   list-style: none;
 }
+.serviceWrapConfig {
+  pointer-events: auto;
+}
+
+select {
+  pointer-events: auto;
+}
 
 a {
   text-decoration: none;

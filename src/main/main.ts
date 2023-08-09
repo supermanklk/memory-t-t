@@ -99,11 +99,12 @@ const createWindow = async () => {
     show: false,
     width: 1200,
     height: 600,
+    fullscreen: true,
     // titleBarStyle: 'hidden',
     // maxWidth: 900,
     // maxHeight: 340,
-    minHeight: 600,
-    minWidth: 1200,
+    // minHeight: 600,
+    // minWidth: 1200,
     maximizable: true, // 窗口是否可最大化。
     alwaysOnTop: true, // 窗口是否永远在别的窗口的上面。
     skipTaskbar: true, // 是否在任务栏中显示窗口。 默认值为 false。
