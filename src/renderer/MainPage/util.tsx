@@ -35,3 +35,13 @@ export const reloadIframe = (url: string) => {
   // 创建并添加新的 iframe
   createIframe(url);
 };
+
+export const unlockScreen = () => {
+  const bodyElement: any = document.querySelector('body');
+  bodyElement.style.pointerEvents = 'auto';
+};
+
+export const lockScreen = () => {
+  const bodyElement: any = document.querySelector('body');
+  bodyElement.style.pointerEvents = 'none';
+};

@@ -1,18 +1,30 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './index.module.scss';
 import { Input, Button, Modal, Popover, message, Radio, Select } from 'antd';
-import 'antd/dist/antd.css'; // 引入antd样式文件
 import { SettingTwoTone } from '@ant-design/icons';
 import warning from '../../../assets/warning.png';
 import { MD5 } from 'crypto-js';
-import { createIframe, reloadIframe, removeIframe } from './util';
+import {
+  createIframe,
+  reloadIframe,
+  removeIframe,
+  unlockScreen,
+  lockScreen as lockScreenUtil,
+} from './util';
 import { ipcRenderer } from 'electron';
+const { Option } = Select;
+
+// Constants
 const HOST = 'http://democ.1cloud.net.cn:18080';
 const ADDRESS = '/web/visualization/index.html';
 
-const { Option } = Select;
+enum LOCAL_STORAGE {
+  'PASS' = 'DESK_PASS',
+  'IP' = 'DESK_IP',
+  'ADDRESS' = 'DESK_ADDRESS',
+}
 
-const Index = (props) => {
+const Index = () => {
   const lockTimeOptions = [
     { value: '0', label: '永不' },
     { value: '1', label: '1分钟' },
@@ -94,42 +106,38 @@ const Index = (props) => {
       });
   };
 
-  // 更新验证码图片URL并设置防抖
-  const updateChaUrl = useCallback(() => {
-    if (canTrigger) {
-      const url = getCaptchaUrl();
-      setCaptchaUrl(url);
-      setCanTrigger(false);
-      setCountdown(30);
-      const countdownTimer = setInterval(() => {
-        setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1000);
-      setTimeout(() => {
-        clearInterval(countdownTimer);
-        setCanTrigger(true);
-      }, 30000);
-    }
-  }, [canTrigger]); // Use useCallback to memoize the function
+  // 更新验证码图片URL并设置节流
+  // const updateChaUrl = useCallback(() => {
+  //   if (canTrigger) {
+  //     const url = getCaptchaUrl();
+  //     setCaptchaUrl(url);
+  //     setCanTrigger(false);
+  //     setCountdown(30);
+  //     const countdownTimer = setInterval(() => {
+  //       setCountdown((prevCountdown) => prevCountdown - 1);
+  //     }, 1000);
+  //     setTimeout(() => {
+  //       clearInterval(countdownTimer);
+  //       setCanTrigger(true);
+  //     }, 30000);
+  //   }
+  // }, [canTrigger]);
 
-  /**
-   * local start
-   */
   const handleServiceIp = (value: string) => {
-    localStorage.setItem('desk-ip', value);
+    localStorage.setItem(LOCAL_STORAGE.IP, value);
   };
 
   const getServiceIp = () => {
-    return localStorage.getItem('desk-ip') || HOST;
+    return localStorage.getItem(LOCAL_STORAGE.IP) || HOST;
   };
 
   const getServiceAdd = () => {
-    return localStorage.getItem('desk-add') || '/web/visualization/index.html';
+    return localStorage.getItem(LOCAL_STORAGE.ADDRESS) || ADDRESS;
   };
 
   const handleServiceAdd = (value: string) => {
-    localStorage.setItem('desk-add', value);
+    localStorage.setItem(LOCAL_STORAGE.ADDRESS, value);
   };
-  // local end
 
   const handleOk = () => {
     if (!serviceIp || !serviceAdd) {
@@ -166,7 +174,7 @@ const Index = (props) => {
   useEffect(() => {
     const handleMouseMove = () => {
       // 在这里执行鼠标移动事件的操作
-      console.log('Mouse moved:');
+      console.log('Mouse moved');
       reStartLockScreenCountDown();
     };
 
@@ -209,11 +217,11 @@ const Index = (props) => {
   };
 
   const setLocalPass = (value: string) => {
-    localStorage.setItem('desk-pass', value);
+    localStorage.setItem(LOCAL_STORAGE.PASS, value);
   };
 
   const getLocalPass = () => {
-    return localStorage.getItem('desk-pass');
+    return localStorage.getItem(LOCAL_STORAGE.PASS);
   };
 
   const logOut = () => {
@@ -237,23 +245,15 @@ const Index = (props) => {
     setScreenSize(e.target.value);
   };
 
-  const handleLockTimeChange = (value) => {
+  const handleLockTimeChange = (value: string) => {
     setLockTime(value);
     lockTimeRef.current = value;
   };
 
-  const unlockScreen = () => {
-    const bodyElement: any = document.querySelector('body');
-    bodyElement.style.pointerEvents = 'auto';
-  };
-
   const lockScreen = () => {
     setLock(true);
-    console.log('faith=============锁屏了');
-    // 使用 JavaScript 获取 body 元素
-    const bodyElement: any = document.querySelector('body');
-    // 将 body 元素的 pointer-events 属性设置为 none
-    bodyElement.style.pointerEvents = 'none';
+    console.log('锁屏了-时间=', new Date().valueOf());
+    lockScreenUtil();
   };
 
   // 解决窗口变化影响内部元素布局
