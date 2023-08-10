@@ -103,8 +103,8 @@ const createWindow = async () => {
   };
 
   mainWindow = new BrowserWindow({
-    autoHideMenuBar: true,
-    show: false,
+    // autoHideMenuBar: true,
+    show: false, // 指定窗口是否在创建后立即显示。如果设置为 false，则需要通过调用 win.show() 来显式地显示窗口。默认值为 true。
     width: 1200,
     height: 600,
     fullscreen: true,
@@ -115,7 +115,7 @@ const createWindow = async () => {
     // minWidth: 1200,
     maximizable: true, // 窗口是否可最大化。
     // alwaysOnTop: true, // 窗口是否永远在别的窗口的上面。
-    skipTaskbar: true, // 是否在任务栏中显示窗口。 默认值为 false。
+    skipTaskbar: false, // 指定是否在任务栏中显示窗口的按钮。如果设置为 true，则窗口不会在任务栏中显示对应的按钮。默认值为 false。
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -139,6 +139,9 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
+  const emptyMenu = Menu.buildFromTemplate([]);
+  Menu.setApplicationMenu(emptyMenu);
+
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
@@ -154,8 +157,8 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
@@ -183,6 +186,9 @@ app.on('window-all-closed', () => {
 // 监听来自渲染进程（设置页面）的IPC消息
 ipcMain.on('window-size-change', (event, size) => {
   if (mainWindow) {
+    if (mainWindow.isFullScreen()) {
+      mainWindow.setFullScreen(false);
+    }
     mainWindow.setSize(size.width, size.height);
   }
 });

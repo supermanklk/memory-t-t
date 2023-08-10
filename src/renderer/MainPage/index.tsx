@@ -91,7 +91,7 @@ const Index = () => {
         const mockData = {
           msg: '/brview',
           object: {
-            clsid: '1f9c23c377194ba9a939e36a30ee9f9a',
+            clsid: '9351a079a10c48c2b6ba0419f8789a88',
             roleName: '一般用户',
             userName: 'zhxy',
           },
