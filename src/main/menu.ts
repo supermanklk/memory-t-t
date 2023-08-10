@@ -138,17 +138,23 @@ export default class MenuBuilder {
         },
       ],
     };
+    // const subMenuWindow: DarwinMenuItemConstructorOptions = {
+    //   label: 'Window',
+    //   submenu: [
+    //     {
+    //       label: 'Minimize',
+    //       accelerator: 'Command+M',
+    //       selector: 'performMiniaturize:',
+    //     },
+    //     { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
+    //     { type: 'separator' },
+    //     { label: 'Bring All to Front', selector: 'arrangeInFront:' },
+    //   ],
+    // };
     const subMenuWindow: DarwinMenuItemConstructorOptions = {
       label: 'Window',
       submenu: [
-        {
-          label: 'Minimize',
-          accelerator: 'Command+M',
-          selector: 'performMiniaturize:',
-        },
         { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
-        { type: 'separator' },
-        { label: 'Bring All to Front', selector: 'arrangeInFront:' },
       ],
     };
     const subMenuHelp: MenuItemConstructorOptions = {
@@ -189,7 +195,8 @@ export default class MenuBuilder {
         ? subMenuViewDev
         : subMenuViewProd;
 
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    // return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return [subMenuView, subMenuWindow];
   }
 
   buildDefaultTemplate() {

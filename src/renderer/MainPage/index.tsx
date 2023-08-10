@@ -58,8 +58,8 @@ const Index = () => {
 
   // 服务配置State
   const [screenSize, setScreenSize] = useState('fullscreen');
-  const [customWidth, setCustomWidth] = useState('');
-  const [customHeight, setCustomHeight] = useState('');
+  const [customWidth, setCustomWidth] = useState('1000');
+  const [customHeight, setCustomHeight] = useState('650');
   const [clsid, setClsid] = useState('');
 
   const [lockTime, setLockTime] = useState('0'); // 设置默认值为 '0'，即"永不"
@@ -291,6 +291,11 @@ const Index = () => {
   }, []);
 
   const systemSettingConfirm = () => {
+    if ((!customWidth || !customHeight) && screenSize !== 'fullscreen') {
+      message.warning('请填写屏幕尺寸宽、高');
+      return;
+    }
+
     // 窗口大小
     if (screenSize === 'fullscreen') {
       ipcRenderer.send('fullscreen');

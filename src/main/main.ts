@@ -9,7 +9,14 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, BrowserView } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  BrowserView,
+  Menu,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -96,6 +103,7 @@ const createWindow = async () => {
   };
 
   mainWindow = new BrowserWindow({
+    autoHideMenuBar: true,
     show: false,
     width: 1200,
     height: 600,
@@ -106,7 +114,7 @@ const createWindow = async () => {
     // minHeight: 600,
     // minWidth: 1200,
     maximizable: true, // 窗口是否可最大化。
-    alwaysOnTop: true, // 窗口是否永远在别的窗口的上面。
+    // alwaysOnTop: true, // 窗口是否永远在别的窗口的上面。
     skipTaskbar: true, // 是否在任务栏中显示窗口。 默认值为 false。
     icon: getAssetPath('icon.png'),
     webPreferences: {
