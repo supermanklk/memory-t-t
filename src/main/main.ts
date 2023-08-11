@@ -15,6 +15,7 @@ import {
   shell,
   ipcMain,
   BrowserView,
+  session,
   Menu,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
@@ -32,6 +33,9 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+// 用于存储 Set-Cookie 头信息的数组
+const setCookies: any = [];
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -122,6 +126,45 @@ const createWindow = async () => {
       contextIsolation: false,
     },
   });
+
+  // 解决请求不是一个会话的问题,就是请求获取了一个Response Header 的 Set-Cookie   start
+  // 但是在新的请求没有携带，解决方案就是做2个拦截器，一个是请求前的拦截器，一个是返回的拦截器
+  // 返回的拦截器，获取 Set-Cookie 存到 SetCookies
+  // 请求的拦截器，请求时候，将Cookies携带上
+  // 获取默认的会话
+  const defaultSession = session.defaultSession;
+  // 拦截请求并设置 withCredentials
+  defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    details.requestHeaders['withCredentials'] = 'true';
+
+    const requestHeaders = details.requestHeaders;
+
+    if (setCookies.length > 0) {
+      requestHeaders['Cookie'] = setCookies.join('; ');
+    }
+
+    callback({ cancel: false, requestHeaders: details.requestHeaders });
+  });
+
+  // 拦截返回的响应头
+  defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    const headers = details.responseHeaders;
+
+    // 检查是否存在 Set-Cookie 头
+    if ('Set-Cookie' in headers) {
+      // 处理 Set-Cookie 头
+      const cookies = headers['Set-Cookie'];
+      setCookies.push(...cookies);
+      cookies.forEach((cookie) => {
+        console.log('Received Set-Cookie:', cookie);
+
+        // 在这里可以进行处理，比如解析、保存等操作
+      });
+    }
+
+    callback({ responseHeaders: headers });
+  });
+  // 解决请求不是一个会话的问题,就是请求获取了一个Response Header 的 Set-Cookie   end
 
   function resetLockTimer() {
     mainWindow?.webContents.send('mouseScrolled');

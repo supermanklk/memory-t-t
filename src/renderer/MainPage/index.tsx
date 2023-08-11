@@ -94,34 +94,35 @@ const Index = () => {
     // 调用登录接口，并带上验证码
     const hashedPass = MD5(password).toString();
     const apiUrl = `${HOST}/admin/login/doLogin?password=${hashedPass}&username=${username}&verifyCode=${verifyCode}`;
+    // const apiUrl = `http://democ.1cloud.net.cn:18080/admin/login/doLogin?password=9dd4268bbb9d686ef15b1eeb841ccc13&username=zhxy&verifyCode=${verifyCode}`;
 
     // 在这里执行登录请求，可以使用fetch、axios或其他库
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data: any) => {
-        const mockData = {
-          msg: '/brview',
-          object: {
-            clsid: '9351a079a10c48c2b6ba0419f8789a88',
-            roleName: '一般用户',
-            userName: 'zhxy',
-          },
-          success: true,
-        };
-        if (mockData?.success === true) {
+        // const mockData = {
+        //   msg: '/brview',
+        //   object: {
+        //     clsid: '9351a079a10c48c2b6ba0419f8789a88',
+        //     roleName: '一般用户',
+        //     userName: 'zhxy',
+        //   },
+        //   success: true,
+        // };
+        if (data?.success === true) {
           setLoginErrorText('');
           setLocalPass(password);
-          setClsid(mockData?.object?.clsid);
+          setClsid(data?.object?.clsid);
           let iframeUrl = `${serviceIp}${serviceAdd}`;
           if (serviceAdd.includes(`?`)) {
-            iframeUrl += `&clsid=${mockData?.object?.clsid}`;
+            iframeUrl += `&clsid=${data?.object?.clsid}`;
           } else {
-            iframeUrl += `?clsid=${mockData?.object?.clsid}`;
+            iframeUrl += `?clsid=${data?.object?.clsid}`;
           }
           createIframe(iframeUrl);
           setIslogin(true);
         } else {
-          setLoginErrorText(mockData?.msg);
+          setLoginErrorText(data?.msg);
         }
       })
       .catch((error) => {
