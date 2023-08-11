@@ -69,7 +69,18 @@ const Index = () => {
 
   // 获取验证码图片的URL
   const getCaptchaUrl = () => {
-    return `${HOST}/captcha/create?_t=${new Date().valueOf()}`;
+    let imageUrl = `${HOST}/captcha/create?_t=${new Date().valueOf()}`;
+    fetch(imageUrl)
+      .then((response) => response.blob())
+      .then((blobData) => {
+        const imageUrlObject = URL.createObjectURL(blobData);
+        setCaptchaUrl(imageUrlObject);
+      })
+      .catch((error) => {
+        console.error('Error fetching image:', error);
+      });
+
+    // return `${HOST}/captcha/create?_t=${new Date().valueOf()}`;
   };
 
   // 处理登录按钮点击事件
@@ -171,7 +182,7 @@ const Index = () => {
   // 初始化验证码图片
   useEffect(() => {
     const url = getCaptchaUrl();
-    setCaptchaUrl(url);
+    // setCaptchaUrl(url);
   }, []);
 
   const reStartLockScreenCountDown = () => {
