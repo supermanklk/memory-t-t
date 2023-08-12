@@ -1,6 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './index.module.scss';
-import { Input, Button, Modal, Popover, message, Radio, Select } from 'antd';
+import {
+  Input,
+  Button,
+  Modal,
+  Popover,
+  message,
+  Radio,
+  Select,
+  Checkbox,
+} from 'antd';
 import { SettingTwoTone } from '@ant-design/icons';
 import warning from '../../../assets/warning.png';
 import { MD5 } from 'crypto-js';
@@ -12,6 +21,7 @@ import {
   lockScreen as lockScreenUtil,
 } from './util';
 import { ipcRenderer } from 'electron';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 const { Option } = Select;
 
 // Constants
@@ -20,8 +30,10 @@ const ADDRESS = '/web/visualization/index.html';
 
 enum LOCAL_STORAGE {
   'PASS' = 'DESK_PASS',
+  'USER_NAME' = 'EDSK_USER_NAME',
   'IP' = 'DESK_IP',
   'ADDRESS' = 'DESK_ADDRESS',
+  'REMEMBER' = 'REMEMBER_PASS',
 }
 
 const Index = () => {
@@ -52,6 +64,9 @@ const Index = () => {
   const [logOffModal, setLogOffModal] = useState(false);
   const [logOffPass, setLogOffPass] = useState('');
   const [logOffPassErr, setlogOffPassErr] = useState('');
+
+  const [popOpen, setPopOpen] = useState(false);
+  const [rememberPass, setRememberPass] = useState(false);
 
   // 登录出错提示
   const [loginErrorText, setLoginErrorText] = useState('');
@@ -112,6 +127,7 @@ const Index = () => {
         if (data?.success === true) {
           setLoginErrorText('');
           setLocalPass(password);
+          setLocalUser(username);
           setClsid(data?.object?.clsid);
           let iframeUrl = `${serviceIp}${serviceAdd}`;
           if (serviceAdd.includes(`?`)) {
@@ -122,6 +138,7 @@ const Index = () => {
           createIframe(iframeUrl);
           setIslogin(true);
         } else {
+          getCaptchaUrl();
           setLoginErrorText(data?.msg);
         }
       })
@@ -161,6 +178,14 @@ const Index = () => {
 
   const handleServiceAdd = (value: string) => {
     localStorage.setItem(LOCAL_STORAGE.ADDRESS, value);
+  };
+
+  const handleRememberPass = (value: boolean) => {
+    localStorage.setItem(LOCAL_STORAGE.REMEMBER, value + ``);
+  };
+
+  const getRememberPass = () => {
+    return localStorage.getItem(LOCAL_STORAGE.REMEMBER);
   };
 
   const handleOk = () => {
@@ -225,6 +250,11 @@ const Index = () => {
     if (!isModalOpen) {
       setServiceIp(getServiceIp());
       setserviceAdd(getServiceAdd());
+
+      if (getRememberPass() === 'true') {
+        setPassword;
+        setUsername;
+      }
     }
   }, [isModalOpen]);
 
@@ -244,6 +274,10 @@ const Index = () => {
     localStorage.setItem(LOCAL_STORAGE.PASS, value);
   };
 
+  const setLocalUser = (value: string) => {
+    localStorage.setItem(LOCAL_STORAGE.USER_NAME, value);
+  };
+
   const getLocalPass = () => {
     return localStorage.getItem(LOCAL_STORAGE.PASS);
   };
@@ -258,6 +292,14 @@ const Index = () => {
       setIslogin(false);
       setLogOffModal(false);
       unlockScreen();
+
+      if (!rememberPass) {
+        setUsername('');
+        setPassword('');
+      }
+      setVerifyCode('');
+
+      getCaptchaUrl();
       message.warning('退出成功~');
     } else {
       setlogOffPassErr('密码错误~');
@@ -297,6 +339,17 @@ const Index = () => {
   };
 
   useEffect(() => {
+    let rememer = localStorage.getItem(LOCAL_STORAGE.REMEMBER);
+    if (rememer && rememer === 'true') {
+      setRememberPass(true);
+      if (localStorage.getItem(LOCAL_STORAGE.PASS)) {
+        setPassword(localStorage.getItem(LOCAL_STORAGE.PASS) || '');
+      }
+      if (localStorage.getItem(LOCAL_STORAGE.USER_NAME)) {
+        setPassword(localStorage.getItem(LOCAL_STORAGE.USER_NAME) || '');
+      }
+    }
+
     return () => {
       clearTimeout(countdownLockTimer.current);
     };
@@ -332,8 +385,17 @@ const Index = () => {
     setServiceModal(false);
   };
 
+  const hiddenPopver = (e) => {
+    setPopOpen(false);
+  };
+
+  const rememberThePassword = (e: CheckboxChangeEvent) => {
+    handleRememberPass(e.target.checked);
+    setRememberPass(e.target.checked);
+  };
+
   const content = (
-    <div className={styles.menu}>
+    <div className={styles.menu} onClick={hiddenPopver}>
       <p className={styles.menuItem} onClick={openServiceModal}>
         <span>服务配置</span>
         <span>{`>`}</span>
@@ -353,6 +415,14 @@ const Index = () => {
             placement="leftBottom"
             title={`个人中心${lock ? '(锁屏中)' : ''}`}
             content={content}
+            open={popOpen}
+            onOpenChange={(open) => {
+              if (open) {
+                setLogOffModal(false);
+                setServiceModal(false);
+              }
+              setPopOpen(open);
+            }}
             trigger="click"
           >
             <SettingTwoTone className={styles.settringImg} />
@@ -400,15 +470,19 @@ const Index = () => {
                 style={{ height: 40, width: 100 }}
                 src={captchaUrl}
                 alt="验证码"
-                onClick={() => {
-                  setCaptchaUrl(getCaptchaUrl());
-                }}
+                onClick={getCaptchaUrl}
                 // onClick={updateChaUrl}
               />
             </div>
             {loginErrorText && (
               <div className={styles.loginErrorText}>{loginErrorText}</div>
             )}
+
+            <div className={styles.rememberStyle}>
+              <Checkbox checked={rememberPass} onChange={rememberThePassword}>
+                记住密码
+              </Checkbox>
+            </div>
 
             <Button
               disabled={username == '' || password === '' || verifyCode === ''}
@@ -462,7 +536,7 @@ const Index = () => {
           open={logOffModal}
           onCancel={closeLogOffModal}
         >
-          <div className={styles.logOffModal}>
+          <div id="logoutDiv" className={styles.logOffModal}>
             <div className={styles.warnningDesc}>
               <img className={styles.logOffModalIcon} src={warning} alt="" />
               <span>为防止误操作，请您再次输入密码</span>
@@ -507,7 +581,7 @@ const Index = () => {
           setServiceModal(false);
         }}
       >
-        <div className={styles.serviceConfigItem}>
+        <div id="serviceConfigDiv" className={styles.serviceConfigItem}>
           <label>服务地址</label>
           <Input
             placeholder="请输入服务url"
