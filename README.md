@@ -17,15 +17,15 @@ To package apps for the local platform:
 
 ```bash
 npm run package --mac
+npm run package --win
 ```
 
 ## 生成的mac软件的位置在
 ```
 memory-t-t/release/build/mac/ElectronReact.app
 
-memory-t-t/release/build/mac/记忆胶囊.app // "productName": "记忆胶囊",
+memory-t-t/release/build/mac/xxxx.app // "productName": "xxxx",
 ```
 ## Maintainers
 
-- [faith](https://github.com/supermanklk)
 
