@@ -282,24 +282,28 @@ const Index = () => {
     return localStorage.getItem(LOCAL_STORAGE.PASS);
   };
 
+  const logoutDone = () => {
+    // 将iframe移出
+    removeIframe();
+    setIslogin(false);
+    setLogOffModal(false);
+    unlockScreen();
+
+    if (!rememberPass) {
+      setUsername('');
+      setPassword('');
+    }
+    setVerifyCode('');
+
+    getCaptchaUrl();
+  };
+
   const logOut = () => {
     if (!logOffPass) {
       return;
     }
     if (getLocalPass() === logOffPass) {
-      // 将iframe移出
-      removeIframe();
-      setIslogin(false);
-      setLogOffModal(false);
-      unlockScreen();
-
-      if (!rememberPass) {
-        setUsername('');
-        setPassword('');
-      }
-      setVerifyCode('');
-
-      getCaptchaUrl();
+      logoutDone();
       message.warning('退出成功~');
     } else {
       setlogOffPassErr('密码错误~');
@@ -358,6 +362,18 @@ const Index = () => {
   const systemSettingConfirm = () => {
     if ((!customWidth || !customHeight) && screenSize !== 'fullscreen') {
       message.warning('请填写屏幕尺寸宽、高');
+      return;
+    }
+
+    if (getServiceIp() == serviceIp && getServiceAdd() == serviceAdd) {
+    } else {
+      // 如果是服务地址或者跳转地址修改，则回到登录页面
+      logoutDone();
+      unlockScreen();
+      clearTimeout(countdownLockTimer.current);
+      handleServiceIp(serviceIp);
+      handleServiceAdd(serviceAdd);
+      setServiceModal(false);
       return;
     }
 
