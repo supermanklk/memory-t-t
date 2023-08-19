@@ -111,7 +111,7 @@ const createWindow = async () => {
     show: false, // 指定窗口是否在创建后立即显示。如果设置为 false，则需要通过调用 win.show() 来显式地显示窗口。默认值为 true。
     width: 1200,
     height: 600,
-    fullscreen: true,
+    // fullscreen: false,
     // titleBarStyle: 'hidden',
     // maxWidth: 900,
     // maxHeight: 340,

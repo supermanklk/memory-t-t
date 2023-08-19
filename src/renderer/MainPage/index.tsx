@@ -135,8 +135,11 @@ const Index = () => {
           } else {
             iframeUrl += `?clsid=${data?.object?.clsid}`;
           }
-          createIframe(iframeUrl);
-          setIslogin(true);
+          ipcRenderer.send('fullscreen');
+          setTimeout(() => {
+            createIframe(iframeUrl);
+            setIslogin(true);
+          }, 300);
         } else {
           getCaptchaUrl();
           setLoginErrorText(data?.msg);
