@@ -252,8 +252,8 @@ const Index = () => {
       setserviceAdd(getServiceAdd());
 
       if (getRememberPass() === 'true') {
-        setPassword;
-        setUsername;
+        setPassword(localStorage.getItem(LOCAL_STORAGE.PASS) || '');
+        setUsername(localStorage.getItem(LOCAL_STORAGE.USER_NAME) || '');
       }
     }
   }, [isModalOpen]);
@@ -346,7 +346,7 @@ const Index = () => {
         setPassword(localStorage.getItem(LOCAL_STORAGE.PASS) || '');
       }
       if (localStorage.getItem(LOCAL_STORAGE.USER_NAME)) {
-        setPassword(localStorage.getItem(LOCAL_STORAGE.USER_NAME) || '');
+        setUsername(localStorage.getItem(LOCAL_STORAGE.USER_NAME) || '');
       }
     }
 
