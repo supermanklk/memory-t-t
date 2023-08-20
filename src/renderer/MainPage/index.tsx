@@ -50,6 +50,7 @@ const Index = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [unlockPass, setUnlockPass] = useState('');
 
   const [serviceIp, setServiceIp] = useState(HOST);
   const [serviceAdd, setserviceAdd] = useState(ADDRESS);
@@ -405,6 +406,9 @@ const Index = () => {
   };
 
   const hiddenPopver = (e) => {
+    if (lock) {
+      return;
+    }
     setPopOpen(false);
   };
 
@@ -413,16 +417,42 @@ const Index = () => {
     setRememberPass(e.target.checked);
   };
 
+  const userUnlock = () => {
+    if (unlockPass === localStorage.getItem(LOCAL_STORAGE.PASS)) {
+      // 解锁
+      unlockScreen();
+      setLock(false);
+      setUnlockPass('');
+    } else {
+      message.warning('解锁密码错误~');
+    }
+  };
+
   const content = (
     <div className={styles.menu} onClick={hiddenPopver}>
-      <p className={styles.menuItem} onClick={openServiceModal}>
-        <span>服务配置</span>
-        <span>{`>`}</span>
-      </p>
-      <p className={styles.menuItem} onClick={openLogOffModal}>
-        <span>退出登录</span>
-        <span>{`>`}</span>
-      </p>
+      {lock ? (
+        <div className={styles.unlock}>
+          <Input.Password
+            // @ts-ignore
+            spellcheck="false"
+            placeholder="请输入解锁密码"
+            value={unlockPass}
+            onChange={(e) => setUnlockPass(e.target.value)}
+          />
+          <Button onClick={userUnlock}>解锁</Button>
+        </div>
+      ) : (
+        <>
+          <p className={styles.menuItem} onClick={openServiceModal}>
+            <span>服务配置</span>
+            <span>{`>`}</span>
+          </p>
+          <p className={styles.menuItem} onClick={openLogOffModal}>
+            <span>退出登录</span>
+            <span>{`>`}</span>
+          </p>
+        </>
+      )}
     </div>
   );
 
@@ -431,6 +461,9 @@ const Index = () => {
       <div className={styles.globalCcnfig}>
         {islogin && (
           <Popover
+            destroyTooltipOnHide={true}
+            overlayInnerStyle={{ pointerEvents: 'auto' }}
+            overlayStyle={{ pointerEvents: 'auto' }}
             placement="leftBottom"
             title={`个人中心${lock ? '(锁屏中)' : ''}`}
             content={content}
@@ -454,6 +487,8 @@ const Index = () => {
           <div>
             <div className={styles.loginItem}>
               <Input
+                // @ts-ignore
+                spellcheck="false"
                 className={styles.input}
                 placeholder="请输入账户名"
                 value={username}
@@ -462,6 +497,8 @@ const Index = () => {
             </div>
             <div className={styles.loginItem}>
               <Input.Password
+                // @ts-ignore
+                spellcheck="false"
                 className={styles.input}
                 placeholder="请输入密码(6-16位字母加数字)"
                 value={password}
